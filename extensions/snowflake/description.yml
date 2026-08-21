@@ -1,0 +1,72 @@
+extension:
+  name: snowflake
+  description: Snowflake data source extension - query Snowflake databases directly from DuckDB
+  version: 0.5.2
+  language: C++
+  build: cmake
+  license: MIT
+  maintainers:
+    - iqea-ai
+
+repo:
+  github: iqea-ai/duckdb-snowflake
+  ref: b61f5ad827373db9a5614e5183c1477f601cc82c
+
+install_notes: |
+  **Important:** This extension requires the ADBC Snowflake driver (a separate shared library) to function.
+
+  Install it either with the [dbc](https://docs.columnar.tech/dbc/) driver manager:
+
+      dbc install snowflake
+
+  or with the repository's installer script. No environment variable is needed in either case: the
+  extension discovers the driver next to itself, through standard ADBC driver manifests, and (on
+  Windows) through the ADBC registry keys.
+
+  For platform-specific setup and troubleshooting, see the
+  **[ADBC Driver Installation Guide](https://github.com/iqea-ai/duckdb-snowflake#adbc-driver-setup)**
+  in the [extension repository](https://github.com/iqea-ai/duckdb-snowflake).
+
+docs:
+  hello_world: |
+    -- Install and load the extension
+    INSTALL snowflake FROM community;
+    LOAD snowflake;
+    
+    -- Create a Snowflake secret with password authentication
+    CREATE SECRET my_snowflake (
+        TYPE snowflake,
+        ACCOUNT 'your-account',
+        USER 'your-username',
+        PASSWORD 'your-password',
+        DATABASE 'your-database'
+    );
+    
+    -- Query Snowflake data using pass-through query function
+    SELECT * FROM snowflake_query(
+        'SELECT * FROM customers WHERE state = ''CA''',
+        'my_snowflake'
+    );
+    
+    -- Attach Snowflake database for direct SQL access
+    ATTACH '' AS sf (TYPE snowflake, SECRET my_snowflake, READ_ONLY);
+    SELECT * FROM sf.schema.customers WHERE state = 'CA';
+
+  extended_description: |
+    This community-maintained extension allows DuckDB to connect to Snowflake using Arrow ADBC drivers. 
+    It provides seamless connectivity between DuckDB and Snowflake, supporting multiple authentication methods 
+    (password, key pair, OAuth, external browser/SSO, Okta), predicate pushdown optimization, and comprehensive SQL operations.
+    
+    **Features:**
+    - Multiple authentication methods (Password, Key Pair, OAuth, External Browser/SSO, Okta)
+    - Direct SQL passthrough via `snowflake_query()` function
+    - ATTACH support for mounting Snowflake databases as DuckDB catalogs
+    - Native `GEOMETRY`/`GEOGRAPHY` support via GeoArrow
+    - Predicate pushdown optimization (optional)
+    - Hybrid queries: join Snowflake tables with local DuckDB tables
+    - Full DML read operations: SELECT with WHERE, JOIN, aggregations, subqueries
+
+    **Prerequisites:** The ADBC Snowflake driver must be installed separately (`dbc install snowflake` or the repository's installer script).
+    **See the [ADBC Driver Installation Guide](https://github.com/iqea-ai/duckdb-snowflake#adbc-driver-setup) 
+    for complete setup instructions.** For comprehensive usage examples, authentication methods, and 
+    advanced features, visit the [extension repository](https://github.com/iqea-ai/duckdb-snowflake).

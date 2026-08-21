@@ -9,10 +9,12 @@ extension:
   requires_toolchains: "rust;python3"
   maintainers:
     - samansmink
+    - mlafeldt
 
 repo:
   github: duckdb/extension-template-rs
-  ref: 9d488943d532b81f57031a26c23303c2aaec9c0d
+  andium: 2381c7e1c5026f21c92b7ffe3ae7a6b1d8d177c0
+  ref: abb7b2f3f954a47f90fc37a99cda3ce0618e6094
 
 docs:
   hello_world: |
